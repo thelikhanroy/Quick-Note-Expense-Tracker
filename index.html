@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Quick Note ET</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&family=Source+Code+Pro:wght@400;600&family=Nunito:wght@400;600&family=Luckiest+Guy&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --bg-color: #f4f7f6;
+      --card-bg: #ffffff;
+      --text-main: #333333;
+      --expense-red: #e74c3c;
+      --highlight-bg: #00e676;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg-color); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Header */
+    header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 10px 20px; height: 70px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 100;
+      backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between; position: relative;
+    }
+    
+    .header-default { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .title-group { display: flex; flex-direction: column; }
+    .app-title { font-size: 20px; font-weight: 700; color: var(--primary-color); }
+    .sub-title { font-size: 11px; color: #888; }
+
+    .icon-btn { background: transparent; border: none; padding: 8px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .icon-btn:active { background: #f0f0f0; }
+    .icon-btn svg { width: 24px; height: 24px; fill: #555; }
+
+    /* Expanded Search */
+    .header-search {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: #fff; padding: 0 15px; display: none; align-items: center; gap: 10px; z-index: 101;
+    }
+    .search-input-expanded {
+      flex: 1; padding: 10px 15px; border-radius: 20px; border: 1px solid #ddd; background: #f9f9f9; font-size: 15px;
+    }
+    .search-input-expanded:focus { border-color: var(--primary-color); background: #fff; }
+
+    /* Highlight Logic */
+    .highlight-text { background-color: var(--highlight-bg); color: #000; font-weight: 700; border-radius: 2px; padding: 0 1px; }
+
+    /* Main List */
+    main { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; scroll-behavior: smooth; }
+    .empty-state { text-align: center; margin-top: 50px; color: #aaa; display: none; }
+    .empty-state svg { width: 60px; height: 60px; fill: #ddd; margin-bottom: 15px; }
+
+    /* Note Card */
+    .note-item {
+      background: var(--card-bg); border-radius: 16px; padding: 18px; margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; transition: transform 0.2s;
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .note-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .note-title { font-weight: 700; font-size: 16px; color: #222; width: 85%; line-height: 1.4; }
+    
+    /* 3-Dot Menu Button */
+    .menu-btn { 
+      background: transparent; border: none; padding: 8px; cursor: pointer; border-radius: 50%; 
+      margin-right: -8px; margin-top: -8px;
+    }
+    .menu-btn:active { background: #f5f5f5; }
+    .menu-btn svg { width: 22px; height: 22px; fill: #777; }
+
+    .note-category { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; background: #e3f2fd; color: #1976d2; }
+    .cat-expense-debited { background: #fce4ec; color: #c2185b; }
+    .cat-expense-credited { background: #e8f5e9; color: #388e3c; }
+
+    .note-body { font-size: 14px; color: #555; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+    .note-body-truncated { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .see-more-link { color: var(--primary-color); font-size: 13px; font-weight: 600; cursor: pointer; display: inline-block; margin-top: 4px; }
+    
+    .note-footer { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 10px; }
+    .note-timestamp { font-size: 11px; color: #999; }
+    
+    .media-container { margin-top: 10px; border-radius: 12px; overflow: hidden; max-height: 200px; background: #000; display: flex; align-items: center; justify-content: center; }
+    .media-container img, .media-container video { max-width: 100%; max-height: 200px; object-fit: contain; }
+    .amount-display { font-size: 20px; font-weight: 700; color: #333; display: block; margin-bottom: 5px; }
+
+    /* FAB */
+    .fab { position: fixed; bottom: 90px; right: 25px; width: 60px; height: 60px; background: var(--primary-color); border-radius: 50%; box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 90; transition: transform 0.2s; }
+    .fab:active { transform: scale(0.9); }
+    .fab svg { width: 28px; height: 28px; fill: white; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
+    @media (min-width: 600px) { .modal-overlay { align-items: center; } }
+    
+    .modal {
+      background: #fff; width: 100%; max-width: 500px;
+      border-radius: 20px 20px 0 0; 
+      max-height: 90vh; 
+      display: flex; flex-direction: column; 
+      animation: slideUp 0.3s;
+      overflow: hidden; 
+    }
+    @media (min-width: 600px) { .modal { border-radius: 20px; width: 90%; } }
+    
+    .modal-header { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: #fff; }
+    .modal-title { font-size: 20px; font-weight: 700; color: #333; }
+    .modal-actions { display: flex; align-items: center; gap: 10px; }
+    
+    .header-save-btn { background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .close-modal { background: #f0f0f0; border: none; width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 20px; color: #555; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    
+    .modal-body { padding: 20px; overflow-y: auto; flex-grow: 1; }
+
+    .mode-switch { display: flex; background: #f0f0f0; border-radius: 12px; padding: 4px; margin-bottom: 15px; }
+    .mode-switch button { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 10px; font-weight: 600; color: #777; cursor: pointer; transition: 0.3s; }
+    .mode-switch button.active { background: #fff; color: var(--primary-color); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    
+    input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-family: inherit; font-size: 15px; margin-top: 5px; margin-bottom: 15px; background: #fff; }
+    select {
+       appearance: none;
+       background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+       background-repeat: no-repeat;
+       background-position: right .7em top 50%;
+       background-size: .65em auto;
+    }
+    label { font-size: 12px; font-weight: 600; color: #666; display: block; }
+    
+    .file-input-wrapper { border: 2px dashed #ddd; padding: 20px; text-align: center; border-radius: 12px; cursor: pointer; display: block; margin-bottom: 10px; }
+    .file-preview { width: 100%; height: 100px; object-fit: contain; display: none; margin-top: 10px; border-radius: 8px; }
+
+    /* Action Sheet (Modern Menu) */
+    .action-sheet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; display: none; backdrop-filter: blur(2px); }
+    .action-sheet { position: absolute; bottom: 0; left: 0; width: 100%; background: #f2f2f7; border-radius: 20px 20px 0 0; padding: 20px; animation: slideUp 0.25s; }
+    .sheet-handle { width: 40px; height: 5px; background: #ccc; border-radius: 3px; margin: 0 auto 20px; }
+    .action-btn-group { background: #fff; border-radius: 14px; overflow: hidden; margin-bottom: 15px; }
+    .action-btn { width: 100%; padding: 18px; text-align: center; background: #fff; border: none; font-size: 17px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; border-bottom: 1px solid #eee; color: #007aff; }
+    .action-btn:last-child { border-bottom: none; }
+    .action-btn.delete { color: #ff3b30; font-weight: 600; }
+    .action-btn.cancel { background: #fff; border-radius: 14px; color: #007aff; font-weight: 600; border: none; }
+    .action-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px); background: #333; color: white; padding: 12px 24px; border-radius: 50px; font-size: 14px; z-index: 3000; opacity: 0; transition: all 0.4s; }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* Fonts */
+    .font-playfair { font-family: 'Playfair Display', serif; }
+    .font-source { font-family: 'Source Code Pro', monospace; }
+    .font-nunito { font-family: 'Nunito', sans-serif; }
+    .font-luckiest { font-family: 'Luckiest Guy', cursive; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-default" id="headerDefault">
+      <div class="title-group">
+        <div class="app-title">Quick Note ET</div>
+        <div class="sub-title">Simple Note For You</div>
+      </div>
+      <button class="icon-btn" id="openSearchBtn">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      </button>
+    </div>
+
+    <div class="header-search" id="headerSearch">
+      <input type="text" id="searchInput" class="search-input-expanded" placeholder="Search...">
+      <button class="icon-btn" id="closeSearchBtn">
+        <svg viewBox="0 0 24 24" style="fill: #777;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="notesList">
+    <div class="empty-state" id="emptyState">
+      <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+      <p>No notes yet. Tap + to add one!</p>
+    </div>
+  </main>
+
+  <div class="fab" id="fabBtn"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div>
+
+  <div class="modal-overlay" id="entryModal">
+    <div class="modal">
+      <div class="modal-header">
+         <div class="modal-title" id="modalTitle">New Note</div>
+         <div class="modal-actions">
+           <button type="button" id="headerSaveBtn" class="header-save-btn">Save</button>
+           <button class="close-modal" id="closeModal">&times;</button>
+         </div>
+      </div>
+      
+      <div class="modal-body">
+        <div class="mode-switch">
+          <button id="tabNote" class="active">Note</button>
+          <button id="tabExpense">Expense</button>
+        </div>
+
+        <form id="entryForm">
+          <div id="noteFields">
+            <label>Title</label>
+            <input type="text" id="noteTitle" placeholder="Enter title" />
+            <label>Description</label>
+            <textarea id="noteBody" rows="4" placeholder="Write something..."></textarea>
+            
+            <div style="display: flex; gap: 10px;">
+              <div style="flex:1">
+                 <label>Category</label>
+                 <select id="noteCategory">
+                   <option value="General">General</option> <option value="Personal">Personal</option> <option value="Work">Work</option> <option value="Ideas">Ideas</option>
+                 </select>
+              </div>
+              <div style="flex:1">
+                 <label>Font</label>
+                 <select id="noteFont">
+                   <option value="">Default</option> <option value="font-playfair">Playfair</option> <option value="font-source">Source</option> <option value="font-nunito">Nunito</option> <option value="font-luckiest">Luckiest</option>
+                 </select>
+              </div>
+            </div>
+          </div>
+
+          <div id="expenseFields" style="display: none;">
+            <label>Amount (Limit 10 digits)</label>
+            <input type="number" id="expAmount" placeholder="0.00" maxlength="10"/>
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+               <select id="expCurrency" style="flex: 1; margin:0;">
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                  <option value="JPY">JPY (¥)</option>
+                  <option value="INR">INR (₹)</option>
+                  <option value="CAD">CAD (CA$)</option>
+                  <option value="AUD">AUD (A$)</option>
+                  <option value="CNY">CNY (¥)</option>
+                  <option value="CHF">CHF (Fr)</option>
+                  <option value="SEK">SEK (kr)</option>
+                  <option value="NZD">NZD (NZ$)</option>
+                  <option value="KRW">KRW (₩)</option>
+                  <option value="SGD">SGD (S$)</option>
+                  <option value="HKD">HKD (HK$)</option>
+                  <option value="NOK">NOK (kr)</option>
+                  <option value="DKK">DKK (kr)</option>
+                  <option value="RUB">RUB (₽)</option>
+                  <option value="BRL">BRL (R$)</option>
+                  <option value="ZAR">ZAR (R)</option>
+                  <option value="MXN">MXN (Mex$)</option>
+                  <option value="IDR">IDR (Rp)</option>
+                  <option value="MYR">MYR (RM)</option>
+                  <option value="PHP">PHP (₱)</option>
+                  <option value="TWD">TWD (NT$)</option>
+                  <option value="THB">THB (฿)</option>
+                  <option value="VND">VND (₫)</option>
+                  <option value="BDT">BDT (৳)</option>
+               </select>
+               <select id="expType" style="flex: 1; margin:0;">
+                 <option value="debited">Debit (Red)</option> <option value="credited">Credit (Green)</option>
+               </select>
+            </div>
+            <label>Reason</label>
+            <textarea id="expReason" rows="2" placeholder="Where did you spend?"></textarea>
+          </div>
+
+          <label class="file-input-wrapper">
+            <span style="color: #666; font-size: 14px;">Tap to add Image/Video (Max 2MB)</span>
+            <input type="file" id="mediaInput" accept="image/*, video/*">
+            <img id="previewImg" class="file-preview">
+            <video id="previewVid" class="file-preview" controls></video>
+          </label>
+          <button type="button" id="removeMediaBtn" style="display:none; width:100%; padding:8px; background:#ffebee; color:red; border:none; border-radius:5px; margin-bottom: 20px;">Remove Media</button>
+
+          <input type="hidden" id="editId">
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-sheet-overlay" id="actionSheet">
+    <div class="action-sheet">
+      <div class="sheet-handle"></div>
+      <div class="action-btn-group">
+        <button class="action-btn" id="actionEdit"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> Edit Entry</button>
+        <button class="action-btn delete" id="actionDelete"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Delete Entry</button>
+      </div>
+      <button class="action-btn cancel" id="actionClose">Cancel</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="textModal">
+    <div class="modal" style="height: auto;">
+      <div class="modal-header">
+        <h3 class="modal-title">Details</h3>
+        <button class="close-modal" onclick="document.getElementById('textModal').style.display='none'">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="fullTextContent" style="white-space: pre-wrap; line-height: 1.6; color: #444;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Entry Saved!</div>
+
+  <script>
+    let entries = JSON.parse(localStorage.getItem('quickNoteExpenses') || '[]');
+    let currentMode = 'note';
+    let selectedId = null; 
+    let tempMedia = null;
+    let tempMediaType = null;
+    
+    const dom = {
+      list: document.getElementById('notesList'),
+      empty: document.getElementById('emptyState'),
+      fab: document.getElementById('fabBtn'),
+      modal: document.getElementById('entryModal'),
+      closeModal: document.getElementById('closeModal'),
+      form: document.getElementById('entryForm'),
+      headerSaveBtn: document.getElementById('headerSaveBtn'),
+      
+      headerDefault: document.getElementById('headerDefault'),
+      headerSearch: document.getElementById('headerSearch'),
+      openSearchBtn: document.getElementById('openSearchBtn'),
+      closeSearchBtn: document.getElementById('closeSearchBtn'),
+      searchInput: document.getElementById('searchInput'),
+
+      tabNote: document.getElementById('tabNote'),
+      tabExpense: document.getElementById('tabExpense'),
+      noteFields: document.getElementById('noteFields'),
+      expenseFields: document.getElementById('expenseFields'),
+      modalTitle: document.getElementById('modalTitle'),
+      
+      actionSheet: document.getElementById('actionSheet'),
+      actionEdit: document.getElementById('actionEdit'),
+      actionDelete: document.getElementById('actionDelete'),
+      actionClose: document.getElementById('actionClose'),
+      toast: document.getElementById('toast'),
+      
+      noteTitle: document.getElementById('noteTitle'),
+      noteBody: document.getElementById('noteBody'),
+      noteCategory: document.getElementById('noteCategory'),
+      noteFont: document.getElementById('noteFont'),
+      expAmount: document.getElementById('expAmount'),
+      expCurrency: document.getElementById('expCurrency'),
+      expType: document.getElementById('expType'),
+      expReason: document.getElementById('expReason'),
+      mediaInput: document.getElementById('mediaInput'),
+      previewImg: document.getElementById('previewImg'),
+      previewVid: document.getElementById('previewVid'),
+      editId: document.getElementById('editId'),
+      removeMediaBtn: document.getElementById('removeMediaBtn')
+    };
+
+    function saveToStorage() { localStorage.setItem('quickNoteExpenses', JSON.stringify(entries)); }
+    function showToast(msg) { dom.toast.textContent = msg; dom.toast.classList.add('show'); setTimeout(() => dom.toast.classList.remove('show'), 3000); }
+    function formatAmount(amount) {
+      amount = parseInt(amount);
+      if (amount >= 10000000) return (amount / 10000000).toFixed(2) + 'Cr';
+      if (amount >= 100000) return (amount / 100000).toFixed(2) + 'Lakh';
+      if (amount >= 1000) return (amount / 1000).toFixed(1) + 'k';
+      return amount;
+    }
+    function formatDate(ts) {
+      const d = new Date(ts);
+      return d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }) + ' • ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+    
+    // Security: Escaping HTML to prevent XSS
+    function escapeHTML(str) { return str ? str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m])) : ''; }
+    
+    // Helper to escape regex special characters
+    function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+    // --- SECURE Highlighting Logic ---
+    // Fix: We now escape the text FIRST, then highlight. 
+    // This prevents HTML injection attacks via the search or note content.
+    function highlightText(text, term) {
+      if (!text) return '';
+      if (!term) return escapeHTML(text);
+
+      const safeText = escapeHTML(text);
+      const safeTerm = escapeHTML(term); // Search term must also match the escaped content
+      
+      // Matches EXACTLY the term entered, globally (g), case-insensitive (i)
+      const regex = new RegExp(`(${escapeRegExp(safeTerm)})`, 'gi');
+      return safeText.replace(regex, '<span class="highlight-text">$1</span>');
+    }
+
+    function toggleSearch(show) {
+      if (show) { dom.headerDefault.style.display = 'none'; dom.headerSearch.style.display = 'flex'; dom.searchInput.focus(); }
+      else { dom.headerSearch.style.display = 'none'; dom.headerDefault.style.display = 'flex'; dom.searchInput.value = ''; renderList(entries); }
+    }
+
+    // --- Render ---
+    function renderList(data, searchTerm = '') {
+      dom.list.innerHTML = '';
+      if (data.length === 0) { dom.empty.style.display = 'block'; return; }
+      dom.empty.style.display = 'none';
+
+      data.sort((a, b) => b.id - a.id).forEach((item) => {
+        const el = document.createElement('div');
+        el.className = 'note-item';
+        let contentHtml = '';
+        let categoryClass = 'note-category';
+
+        // NOTE: We use highlightText() which returns safe, escaped HTML string.
+        if (item.type === 'note') {
+          const fontClass = item.font || '';
+          contentHtml = `
+            <div class="note-header">
+              <div class="note-title ${fontClass}">${highlightText(item.title, searchTerm)}</div>
+              <button class="menu-btn" onclick="openMenu(${item.id})">
+                <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+              </button>
+            </div>
+            <span class="${categoryClass}">${escapeHTML(item.category)}</span>
+            <div class="note-body ${fontClass} note-body-truncated" id="body-${item.id}">${highlightText(item.body, searchTerm)}</div>
+            ${item.body.length > 100 ? `<span class="see-more-link" onclick="showFullText(${item.id})">See More</span>` : ''}
+          `;
+        } else {
+          categoryClass += item.expType === 'credited' ? ' cat-expense-credited' : ' cat-expense-debited';
+          let displayAmount = searchTerm && item.amount.toString().includes(searchTerm) ? highlightText(item.amount.toString(), searchTerm) : formatAmount(item.amount);
+
+          contentHtml = `
+             <div class="note-header">
+              <div class="amount-display" onclick="toggleAmount(this, '${item.amount}', '${item.currency}')">${displayAmount} ${item.currency}</div>
+              <button class="menu-btn" onclick="openMenu(${item.id})">
+                <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+              </button>
+            </div>
+            <span class="${categoryClass}">${item.expType === 'credited' ? 'Credited' : 'Debited'}</span>
+            <div class="note-body note-body-truncated">${highlightText(item.reason, searchTerm)}</div>
+          `;
+        }
+
+        if (item.media) {
+          contentHtml += `<div class="media-container">`;
+          contentHtml += item.mediaType === 'image' ? `<img src="${item.media}">` : `<video src="${item.media}" controls></video>`;
+          contentHtml += `</div>`;
+        }
+        contentHtml += `<div class="note-footer"><span class="note-timestamp">${formatDate(item.timestamp)}</span></div>`;
+        el.innerHTML = contentHtml;
+        dom.list.appendChild(el);
+      });
+    }
+
+    function toggleAmount(el, amount, curr) {
+       el.innerText = (el.innerText.includes('k') || el.innerText.includes('Lakh')) ? amount + ' ' + curr : formatAmount(amount) + ' ' + curr;
+    }
+    function showFullText(id) {
+      const item = entries.find(e => e.id === id);
+      if(item) {
+        document.getElementById('fullTextContent').innerHTML = `<b>${escapeHTML(item.title || 'Details')}</b><br><br>${escapeHTML(item.body || item.reason)}`;
+        document.getElementById('textModal').style.display = 'flex';
+      }
+    }
+
+    // Listeners
+    dom.searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = entries.filter(item => 
+        (item.title||'').toLowerCase().includes(term) || (item.body||'').toLowerCase().includes(term) || 
+        (item.reason||'').toLowerCase().includes(term) || (item.amount||'').toString().includes(term)
+      );
+      renderList(filtered, e.target.value);
+    });
+
+    dom.openSearchBtn.addEventListener('click', () => toggleSearch(true));
+    dom.closeSearchBtn.addEventListener('click', () => toggleSearch(false));
+
+    // Modal
+    function openModal(isEdit = false) {
+      dom.modal.style.display = 'flex';
+      if (!isEdit) {
+        dom.form.reset(); dom.editId.value = ''; resetMedia();
+        dom.modalTitle.textContent = currentMode === 'note' ? 'New Note' : 'New Expense';
+        switchTab(currentMode);
+      }
+    }
+    function switchTab(mode) {
+      currentMode = mode;
+      if (mode === 'note') {
+        dom.tabNote.classList.add('active'); dom.tabExpense.classList.remove('active');
+        dom.noteFields.style.display = 'block'; dom.expenseFields.style.display = 'none';
+        if(!dom.editId.value) dom.modalTitle.textContent = 'New Note';
+      } else {
+        dom.tabNote.classList.remove('active'); dom.tabExpense.classList.add('active');
+        dom.noteFields.style.display = 'none'; dom.expenseFields.style.display = 'block';
+        if(!dom.editId.value) dom.modalTitle.textContent = 'New Expense';
+      }
+    }
+
+    dom.fab.addEventListener('click', () => openModal(false));
+    dom.closeModal.addEventListener('click', () => dom.modal.style.display = 'none');
+    dom.tabNote.addEventListener('click', (e) => { e.preventDefault(); switchTab('note'); });
+    dom.tabExpense.addEventListener('click', (e) => { e.preventDefault(); switchTab('expense'); });
+
+    // Menu
+    window.openMenu = function(id) { selectedId = id; dom.actionSheet.style.display = 'block'; }
+    dom.actionSheet.addEventListener('click', (e) => { if(e.target === dom.actionSheet) dom.actionSheet.style.display = 'none'; });
+    dom.actionClose.addEventListener('click', () => dom.actionSheet.style.display = 'none');
+    
+    dom.actionDelete.addEventListener('click', () => {
+      if(confirm('Delete this item?')) {
+        entries = entries.filter(e => e.id !== selectedId); saveToStorage(); renderList(entries, dom.searchInput.value); showToast('Deleted');
+      }
+      dom.actionSheet.style.display = 'none';
+    });
+    
+    dom.actionEdit.addEventListener('click', () => {
+      dom.actionSheet.style.display = 'none';
+      const item = entries.find(e => e.id === selectedId);
+      if(!item) return;
+      dom.editId.value = item.id; currentMode = item.type; switchTab(item.type); openModal(true);
+      if(item.type === 'note') {
+        dom.noteTitle.value = item.title; dom.noteBody.value = item.body;
+        dom.noteCategory.value = item.category; dom.noteFont.value = item.font || '';
+        dom.modalTitle.textContent = 'Edit Note';
+      } else {
+        dom.expAmount.value = item.amount; dom.expCurrency.value = item.currency;
+        dom.expReason.value = item.reason; dom.expType.value = item.expType;
+        dom.modalTitle.textContent = 'Edit Expense';
+      }
+      if(item.media) {
+         tempMedia = item.media; tempMediaType = item.mediaType;
+         if(item.mediaType === 'image') { dom.previewImg.src = item.media; dom.previewImg.style.display = 'block'; dom.previewVid.style.display = 'none'; }
+         else { dom.previewVid.src = item.media; dom.previewVid.style.display = 'block'; dom.previewImg.style.display = 'none'; }
+         dom.removeMediaBtn.style.display = 'block';
+      } else { resetMedia(); }
+    });
+
+    // Save Handling (Triggered by Header Button)
+    dom.headerSaveBtn.addEventListener('click', () => {
+       const ts = new Date().getTime();
+       let newItem = {};
+
+       if (currentMode === 'note') {
+         if(!dom.noteTitle.value.trim()) return alert('Title required');
+         newItem = { type: 'note', title: dom.noteTitle.value, body: dom.noteBody.value, category: dom.noteCategory.value, font: dom.noteFont.value };
+       } else {
+         if(!dom.expAmount.value) return alert('Amount required');
+         newItem = { type: 'expense', amount: dom.expAmount.value.slice(0, 10), currency: dom.expCurrency.value, reason: dom.expReason.value, expType: dom.expType.value };
+       }
+
+       newItem.media = tempMedia; newItem.mediaType = tempMediaType; newItem.timestamp = ts;
+
+       if (dom.editId.value) {
+         const index = entries.findIndex(x => x.id == dom.editId.value);
+         if(index > -1) { newItem.id = parseInt(dom.editId.value); entries[index] = newItem; }
+       } else { newItem.id = ts; entries.push(newItem); }
+
+       saveToStorage(); renderList(entries, dom.searchInput.value);
+       dom.modal.style.display = 'none'; showToast('Saved');
+    });
+
+    // Media
+    dom.mediaInput.addEventListener('change', function() {
+      const file = this.files[0];
+      if (file) {
+        // SECURITY UPDATE: Prevent crash by limiting file size to 2MB (approx)
+        if (file.size > 2 * 1024 * 1024) {
+             alert('File is too large! Please upload files under 2MB to prevent app freezing.');
+             this.value = ''; // Clear input
+             return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          tempMedia = e.target.result; tempMediaType = file.type.startsWith('image/') ? 'image' : 'video';
+          if(tempMediaType === 'image') { dom.previewImg.src = tempMedia; dom.previewImg.style.display = 'block'; dom.previewVid.style.display = 'none'; }
+          else { dom.previewVid.src = tempMedia; dom.previewVid.style.display = 'block'; dom.previewImg.style.display = 'none'; }
+          dom.removeMediaBtn.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    dom.removeMediaBtn.addEventListener('click', resetMedia);
+    function resetMedia() {
+      dom.mediaInput.value = ''; dom.previewImg.style.display = 'none'; dom.previewVid.style.display = 'none';
+      dom.removeMediaBtn.style.display = 'none'; tempMedia = null;
+    }
+
+    renderList(entries);
+  </script>
+</body>
+</html>
