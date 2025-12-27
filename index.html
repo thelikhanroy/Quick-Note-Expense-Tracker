@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />  
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>  
   <title>Quick Note ET</title>  
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&family=Source+Code+Pro:wght@400;600&family=Nunito:wght@400;600&family=Luckiest+Guy&display=swap" rel="stylesheet">  
+  <!-- Fonts for Multi-language support -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Hind:wght@400;700&family=Noto+Sans+Bengali:wght@400;700&family=Mukta:wght@400;700&family=Tiro+Bangla&family=Playfair+Display:wght@400;600&family=Source+Code+Pro:wght@400;600&family=Nunito:wght@400;600&family=Luckiest+Guy&display=swap" rel="stylesheet">  
   <style>  
     :root {  
-      /* Default (Light) Theme Variables */  
       --primary-color: #4CAF50;  
       --bg-color: #f4f7f6;  
       --card-bg: #ffffff;  
@@ -19,7 +19,6 @@
       --sheet-bg: #f2f2f7;  
       --highlight-bg: #00e676;  
     }  
-    /* Dark Theme Variables */  
     body.dark-mode {  
       --primary-color: #66bb6a;  
       --bg-color: #121212;  
@@ -86,16 +85,7 @@
 
     /* Theme Options */  
     .theme-options-container { display: none; flex-direction: column; background: rgba(0,0,0,0.02); }  
-    .theme-opt {   
-        padding: 12px 20px 12px 55px;   
-        display: flex;   
-        align-items: center;   
-        justify-content: space-between;  
-        gap: 10px;   
-        font-size: 14px;   
-        color: var(--text-main);   
-        cursor: pointer;   
-    }  
+    .theme-opt { padding: 12px 20px 12px 55px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--text-main); cursor: pointer; }  
     .arrow-icon { width: 16px; height: 16px; margin-left: auto; transition: transform 0.3s; }  
     .sidebar-item.expanded .arrow-icon { transform: rotate(180deg); }  
 
@@ -109,7 +99,7 @@
     .empty-state svg { width: 60px; height: 60px; fill: var(--border-color); margin-bottom: 15px; }  
 
     /* Note Card */  
-    .note-item { background: var(--card-bg); border-radius: 16px; padding: 18px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; animation: fadeIn 0.3s ease-out forwards; border: 1px solid var(--border-color); user-select: none; /* Disable default selection to handle Long Press */ }  
+    .note-item { background: var(--card-bg); border-radius: 16px; padding: 18px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; animation: fadeIn 0.3s ease-out forwards; border: 1px solid var(--border-color); user-select: none; }  
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }  
     .note-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }  
     .note-title { font-weight: 700; font-size: 16px; color: var(--text-main); width: 85%; line-height: 1.4; }  
@@ -123,8 +113,8 @@
     .see-more-link { color: var(--primary-color); font-size: 13px; font-weight: 600; cursor: pointer; display: inline-block; margin-top: 4px; }  
     .note-footer { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 10px; }  
     .note-timestamp { font-size: 11px; color: #999; }  
-    .media-container { margin-top: 10px; border-radius: 12px; overflow: hidden; max-height: 200px; background: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; }  
-    .media-container img, .media-container video { max-width: 100%; max-height: 200px; object-fit: contain; }  
+    .media-container { margin-top: 10px; border-radius: 12px; overflow: hidden; max-height: 200px; background: #000; display: flex; align-items: center; justify-content: center; cursor: pointer; width: 100%; height: 200px; }  
+    .media-container img, .media-container video { width: 100%; height: 100%; object-fit: cover; }  
     .amount-display { font-size: 20px; font-weight: 700; color: var(--text-main); display: block; margin-bottom: 5px; }  
 
     /* FAB */  
@@ -146,18 +136,32 @@
     .close-modal { background: transparent; border: none; font-size: 28px; color: var(--text-main); cursor: pointer; display: flex; align-items: center; height: 100%; padding: 0 10px; }  
     .modal-body { padding: 20px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; background: var(--modal-bg); }  
 
-    /* Hide Header in Entry & Drawing for "Full Page" look */  
     #entryModal .modal-header, #drawingModal .modal-header { display: none !important; }  
     #entryModal .modal-body, #drawingModal .modal-body { padding-top: 40px; }  
 
-    /* Note Input */  
-    .note-title-input { font-size: 22px; font-weight: 700; border: none; outline: none; width: 100%; margin-bottom: 5px; background: transparent; color: var(--text-main); }  
+    /* --- NEW BOTTOM TOOLBAR STYLE --- */
+    .editor-footer { border-top: 1px solid var(--border-color); padding: 10px 5px; background: var(--modal-bg); display: flex; flex-direction: column; gap: 10px; margin-top: auto; position: relative; }
+    .tool-buttons { display: flex; gap: 15px; align-items: center; }
+    .tool-btn-text { background: rgba(0,0,0,0.05); border: none; border-radius: 8px; padding: 8px 12px; font-weight: 700; color: var(--text-main); cursor: pointer; font-size: 14px; min-width: 60px; }
+    .tool-btn-text.active { background: var(--primary-color); color: white; }
+    .save-btn-text { background: var(--primary-color); border: none; border-radius: 8px; padding: 8px 20px; font-weight: 700; color: white; cursor: pointer; font-size: 14px; }
+    .tool-panel { display: none; animation: fadeIn 0.2s; background: var(--modal-bg); border: 1px solid var(--border-color); border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 5px; z-index: 50; position: absolute; bottom: 60px; }
+    #sizePanel { left: 5px; width: 250px; }
+    .slider-wrapper { display: flex; align-items: center; gap: 10px; padding: 10px; }
+    input[type=range] { flex:1; height: 5px; margin: 0; }
+    #fontPanel { left: 5px; right: auto; width: max-content; max-width: 200px; }
+    .font-list-wrapper { display: flex; flex-direction: column; gap: 2px; padding: 0; max-height: 250px; overflow-y: auto; }
+    .font-chip { padding: 8px 15px; border-radius: 5px; border: none; background: transparent; color: var(--text-main); font-size: 15px; width: 100%; text-align: left; cursor: pointer; font-weight: 500; }
+    .font-chip:hover { background: rgba(0,0,0,0.05); }
+    .font-chip.active { color: var(--primary-color); font-weight: 700; background: rgba(76, 175, 80, 0.1); }
 
-    .note-body-input { flex: 1; height: 100%; font-size: 16px; line-height: 1.6; border: none; outline: none; width: 100%; resize: none; background: transparent; font-family: inherit; margin-top: 0; color: var(--text-main); white-space: pre-wrap; word-wrap: break-word; overflow-x: hidden; }  
+    /* Note Input Styles */
+    .note-title-input { font-size: 22px; font-weight: 700; border: none; outline: none; width: 100%; margin-bottom: 5px; padding-bottom: 0px; background: transparent; color: var(--text-main); font-family: inherit; }  
+    .note-body-input { flex: 1; height: 100%; font-size: 16px; line-height: 1.6; border: none; outline: none; width: 100%; resize: none; background: transparent; margin-top: 0; padding-top: 5px; color: var(--text-main); white-space: pre-wrap; word-wrap: break-word; overflow-x: hidden; font-weight: 700; font-family: inherit; }  
 
     #noteFields { display: flex; flex-direction: column; flex: 1; height: 100%; }
     #expenseFields { display: none; flex-direction: column; flex: 1; height: 100%; }
-    #expReason { flex: 1; resize: none; white-space: pre-wrap; word-wrap: break-word; overflow-x: hidden; }
+    #expReason { flex: 1; resize: none; white-space: pre-wrap; word-wrap: break-word; overflow-x: hidden; font-weight: 700; font-family: inherit; }
 
     input, textarea, select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 10px; font-family: inherit; font-size: 15px; margin-top: 5px; margin-bottom: 15px; background: var(--input-bg); color: var(--text-main); }  
     #entryModal input, #entryModal textarea { border-color: transparent; }  
@@ -166,19 +170,26 @@
     .file-preview { width: 100%; height: auto; max-height: 300px; object-fit: contain; display: none; margin-top: 10px; border-radius: 8px; margin-bottom: 15px; }  
 
     /* Drawing Modal */  
-    #drawingModal .modal-body { padding: 0; position: relative; background: #fff; }  
+    #drawingModal .modal-body { padding: 0; position: relative; background: #fff; touch-action: none; overflow: hidden; }  
     canvas { background: #fff; display: block; width: 100%; height: 100%; touch-action: none; }  
     .drawing-tools { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: #fff; padding: 10px; border-radius: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; gap: 10px; align-items: center; }  
     .color-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }  
     .color-btn.active { border-color: #333; transform: scale(1.1); }  
 
-    /* NEW: Rainbow/Custom Color Picker Style - Icon like color wheel */
-    .color-picker-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); }
-    .color-picker-btn.active { border-color: #333; transform: scale(1.1); }
-
     .tool-btn { background: #eee; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }  
     .tool-btn.active { background: var(--primary-color); color: white; }  
     .tool-btn svg { width: 18px; height: 18px; fill: currentColor; }  
+
+    /* Drawing Zoom/Pan Header */
+    .drawing-header { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex; gap: 10px; align-items: center; z-index: 10; border: 1px solid #eee; }
+    .zoom-display { font-size: 14px; font-weight: 700; min-width: 40px; text-align: center; color: #333; }
+    .mode-btn { background: #f0f0f0; border: none; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; gap: 5px; align-items: center; }
+    .mode-btn.active { background: var(--primary-color); color: white; }
+    
+    @keyframes slideInRight { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInLeft { from { transform: translateX(-30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .slide-right { animation: slideInRight 0.3s ease-out forwards; }
+    .slide-left { animation: slideInLeft 0.3s ease-out forwards; }
 
     /* Security Modal & Cloud Modal (Shared Modern Style) */  
     #securityModal .modal, #cloudModal .modal { height: auto; max-width: 350px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin: auto; background: var(--modal-bg); }  
@@ -188,7 +199,6 @@
     .enable-btn, .sync-btn-primary { background: #4CAF50; color: white; width: 100%; padding: 12px; border:none; border-radius:10px; font-weight:600; margin-bottom: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;}  
     .disable-btn, .sync-btn-danger { background: #ffebee; color: #c2185b; border: 1px solid #ffcdd2; width: 100%; padding: 12px; border-radius:10px; font-weight:600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;}  
     
-    /* Specific Sync Buttons */
     .sync-btn-secondary { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; width: 100%; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0;}
     .sync-btn-neutral { background: #f5f5f5; color: #666; border: 1px solid #ddd; width: 100%; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 0;}
 
@@ -217,26 +227,20 @@
     .close-viewer { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 30px; background: transparent; border: none; cursor: pointer; z-index: 5001; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
 
     /* Fix: Details Page Text Wrapping */
-    #fullTextContent {
-       white-space: pre-wrap; /* Preserves new lines */
-       word-wrap: break-word; /* Breaks long words to next line */
-       overflow-wrap: break-word; /* Standard property for breaking words */
-       width: 100%;
-       line-height: 1.6;
-       color: var(--text-main);
-    }
+    #fullTextContent { white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word; width: 100%; line-height: 1.6; color: var(--text-main); }
 
-    /* CLOUD SYNC STYLES (Up and Down 2x2 Grid) */
+    /* Details Modal Styling */
+    #textModal .modal-header { box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding-bottom: 10px; margin-bottom: 0; z-index: 20; position: relative; }
+    #textModal .modal-body { padding-top: 10px; }
+
+    /* CLOUD SYNC STYLES */
     .cloud-btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
     .cloud-btn-primary { flex: 1; background: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%; }
     .cloud-btn-secondary { flex: 1; background: transparent; border: 1px solid var(--primary-color); color: var(--primary-color); padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%; }
-    
     .user-info { margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.03); border-radius: 10px; text-align: center; width: 100%; }
     .user-email { font-weight: 700; color: var(--primary-color); font-size: 16px; display: block; margin-bottom: 5px; }
-    
     .sync-grid { display: flex; flex-direction: column; gap: 10px; width: 100%; }
     .sync-row { display: flex; gap: 10px; width: 100%; }
-    
     .toggle-auth-link { margin-top: 15px; text-align: center; font-size: 13px; color: var(--text-sub); cursor: pointer; text-decoration: underline; }
     .sync-icon { width: 20px; height: 20px; fill: currentColor; }
 
@@ -248,17 +252,7 @@
     .pass-hint { font-size: 11px; color: var(--text-sub); margin-bottom: 15px; text-align: left; padding-left: 2px; }
     
     /* Forgot Password Link Style */
-    .forgot-link {
-        font-size: 12px;
-        color: var(--primary-color);
-        text-align: right;
-        margin-top: 5px;
-        margin-bottom: 15px;
-        cursor: pointer;
-        display: block;
-        width: 100%;
-        text-decoration: none;
-    }
+    .forgot-link { font-size: 12px; color: var(--primary-color); text-align: right; margin-top: 5px; margin-bottom: 15px; cursor: pointer; display: block; width: 100%; text-decoration: none; }
     .forgot-link:active { opacity: 0.7; }
   </style>  
 </head>  
@@ -510,6 +504,7 @@
     </div>  
     <div class="modal-body">  
       <form id="entryForm" style="display:flex; flex-direction:column; height:100%;">  
+        
         <div id="noteFields">  
           <input type="text" id="noteTitle" class="note-title-input" placeholder="Title" />  
           <textarea id="noteBody" class="note-body-input" placeholder="Note"></textarea>  
@@ -541,8 +536,42 @@
         </div>  
 
         <input type="file" id="mediaInput" accept="image/*, video/*" style="display:none;">  
-        <button type="button" id="removeMediaBtn" style="display:none; width:100%; padding:8px; background:#ffebee; color:red; border:none; border-radius:5px; margin-bottom: 20px;">Remove Media</button>  
-        <input type="hidden" id="editId">  
+        <button type="button" id="removeMediaBtn" style="display:none; width:100%; padding:8px; background:#ffebee; color:red; border:none; border-radius:5px; margin-bottom: 10px;">Remove Media</button>  
+        <input type="hidden" id="editId">
+
+        <!-- NEW: Bottom Formatting Toolbar -->
+        <div class="editor-footer">
+            <!-- Panels (Hidden initially) -->
+            <div id="sizePanel" class="tool-panel">
+                <div class="slider-wrapper">
+                    <span style="font-size:12px; color:var(--text-sub);">A-</span>
+                    <!-- Modified: Range 0-10 -->
+                    <input type="range" id="sizeSlider" min="0" max="10" value="3" step="1" oninput="applyFormat()">
+                    <span style="font-size:16px; font-weight:bold; color:var(--text-sub);">A+</span>
+                </div>
+            </div>
+
+            <!-- MODIFIED: Font Panel Floating Exactly Above ff -->
+            <div id="fontPanel" class="tool-panel">
+                <div class="font-list-wrapper">
+                    <div class="font-chip" onclick="setFont('Poppins', this)" style="font-family:'Poppins', sans-serif">Poppins</div>
+                    <div class="font-chip" onclick="setFont('Hind', this)" style="font-family:'Hind', sans-serif">Hind</div>
+                    <div class="font-chip" onclick="setFont('Noto Sans Bengali', this)" style="font-family:'Noto Sans Bengali', sans-serif">Bengali</div>
+                    <div class="font-chip" onclick="setFont('Mukta', this)" style="font-family:'Mukta', sans-serif">Mukta</div>
+                    <div class="font-chip" onclick="setFont('Tiro Bangla', this)" style="font-family:'Tiro Bangla', serif">Tiro</div>
+                </div>
+            </div>
+
+            <!-- Main Buttons -->
+            <div class="tool-buttons">
+                <!-- TT shows size e.g. TT 5 -->
+                <button type="button" class="tool-btn-text" id="btnTT" onclick="toggleTool('size')">Size 3</button>
+                <button type="button" class="tool-btn-text" id="btnFF" onclick="toggleTool('font')">Style</button>
+                <!-- Req 2: Save Button -->
+                <button type="button" class="save-btn-text" onclick="saveEntryAndClose()">Save</button>
+            </div>
+        </div>
+
       </form>  
     </div>
 </div>
@@ -554,17 +583,30 @@
        <div style="width: 28px;"></div>  
     </div>  
     <div class="modal-body">  
+       <!-- Modified: Only Zoom Display & Move Mode -->
+       <div class="drawing-header">
+           <span class="zoom-display" id="zoomLevelDisplay">0%</span>
+           <div style="width:1px; height:15px; background:#ccc;"></div>
+           <button class="mode-btn" id="panModeBtn" onclick="togglePanMode()">
+               <svg style="width:16px; height:16px; fill:currentColor" viewBox="0 0 24 24"><path d="M18 9c-.95 0-1.81.51-2.27 1.29-.27-.08-.55-.12-.85-.12-.87 0-1.68.32-2.31.87-.29-.63-.94-1.04-1.67-1.04-.6 0-1.15.26-1.53.69-.15-.09-.32-.15-.51-.15-1.54 0-2.61 1.67-1.85 3.19l1.6 3.21c1.37 2.74 4.19 4.3 6.94 4.04 3.01-.28 5.37-3.04 5.37-6.08V11c0-1.1-.9-2-2-2z"/></svg> Move
+           </button>
+           <!-- Req 2: Save Button in Drawing -->
+           <div style="width:1px; height:15px; background:#ccc;"></div>
+           <button class="mode-btn" onclick="saveAndCloseDrawing()" style="background:var(--primary-color); color:white;">Save</button>
+       </div>
+
        <canvas id="drawCanvas"></canvas>  
        <div class="drawing-tools">  
-          <button class="color-btn active" data-tool="color" data-color="#000" style="background:#000"></button>  
-          <button class="color-btn" data-tool="color" data-color="#e74c3c" style="background:#e74c3c"></button>  
-          <button class="color-btn" data-tool="color" data-color="#4CAF50" style="background:#4CAF50"></button>  
-          <button class="color-btn" data-tool="color" data-color="#2196F3" style="background:#2196F3"></button>  
+          <!-- Left Arrow -->
+          <button class="tool-btn" id="prevColorBtn">&lt;</button>
+          
+          <!-- Color Container -->
+          <div id="dynamicColorContainer" style="display:flex; gap:10px; align-items:center;"></div>
+          
+          <!-- Right Arrow -->
+          <button class="tool-btn" id="nextColorBtn">&gt;</button>
 
-          <!-- NEW: Rainbow/Custom Color Picker -->
-          <button class="color-picker-btn" id="customColorBtn"></button>
-          <!-- FIXED: Added default value red to ensure sliders are 100% visible on open -->
-          <input type="color" id="nativeColorPicker" style="display:none" value="#ff0000">
+          <div style="width:1px; height:20px; background:#ddd; margin:0 5px;"></div>
 
           <button class="tool-btn" id="eraserBtn" data-tool="eraser" title="Eraser">  
              <svg viewBox="0 0 24 24"><path d="M16.24 3.56l4.95 4.94c.78.79.78 2.05 0 2.84L12 20.53a4.008 4.008 0 0 1-5.66 0L2.81 17c-.78-.79-.78-2.05 0-2.84l10.91-10.91c.79-.78 2.05-.78 2.84 0zM4.22 15.58l3.54 3.53c.78.79 2.04.79 2.83 0l8.48-8.48-4.95-4.95-8.48 8.48c-.78.79-.78 2.04 0 2.83z"/></svg>  
@@ -1103,7 +1145,8 @@
       removeMediaBtn: document.getElementById('removeMediaBtn'),  
       mediaViewerOverlay: document.getElementById('mediaViewerOverlay'),  
       mediaViewerContent: document.getElementById('mediaViewerContent'),  
-      mediaViewerVideo: document.getElementById('mediaViewerVideo')  
+      mediaViewerVideo: document.getElementById('mediaViewerVideo'),
+      sizeSlider: document.getElementById('sizeSlider')
     };  
   
     function saveToStorage() {   
@@ -1193,8 +1236,6 @@
         el.addEventListener('mouseleave', handleTouchEnd);  
   
         let contentHtml = '';  
-        // Logic for See More: If > 3 lines (checked by newline count) OR very long text string (approx 120 chars)  
-        // This removes the strict 100 limit but ensures "See More" shows if it wraps visually.  
         const textContent = item.body || item.reason || '';  
         const hasNewLines = textContent.split('\n').length > 3;  
         const isLongText = textContent.length > 120; // Fallback for long single lines that wrap  
@@ -1207,7 +1248,7 @@
               <button class="menu-btn" onclick="openMenu(${item.id})"><svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>  
             </div>  
             ${item.type === 'note' ? `<span class="note-category">${escapeHTML(item.category || 'General')}</span>` : ''}  
-            <div class="note-body note-body-truncated" id="body-${item.id}">${highlightText(item.body, searchTerm)}</div>  
+            <div class="note-body note-body-truncated" id="body-${item.id}" style="font-family: ${item.fontFamily || 'inherit'}; font-size: ${item.fontSize ? item.fontSize + 'px' : '14px'}; font-weight:700;">${highlightText(item.body, searchTerm)}</div>  
             ${showSeeMore ? `<span class="see-more-link" onclick="showFullText(${item.id})">See More</span>` : ''}  
           `;  
         } else {  
@@ -1217,7 +1258,7 @@
               <button class="menu-btn" onclick="openMenu(${item.id})"><svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></button>  
             </div>  
             <span class="note-category ${item.expType === 'credited' ? 'cat-expense-credited' : 'cat-expense-debited'}">${item.expType}</span>  
-            <div class="note-body note-body-truncated">${highlightText(item.reason, searchTerm)}</div>  
+            <div class="note-body note-body-truncated" style="font-family: ${item.fontFamily || 'inherit'}; font-size: ${item.fontSize ? item.fontSize + 'px' : '14px'}; font-weight:700;">${highlightText(item.reason, searchTerm)}</div>  
             ${showSeeMore ? `<span class="see-more-link" onclick="showFullText(${item.id})">See More</span>` : ''}  
           `;  
         }  
@@ -1253,10 +1294,22 @@
     function showFullText(id) {  
       const item = entries.find(e => e.id === id);  
       if(item) {  
-        // Fix 1: Title goes to Header
-        document.getElementById('detailModalTitle').innerText = item.title || (item.type === 'expense' ? 'Expense Details' : 'Details');
-        // Fix 1 & 2: Body goes to Content area, duplicate title removed.
-        document.getElementById('fullTextContent').innerHTML = escapeHTML(item.body || item.reason);
+        // MODIFIED: Show Amount for Expenses, Title for Notes
+        let headerText = '';
+        if(item.type === 'expense') {
+            headerText = `${item.amount} ${item.currency}`; // Fix 2
+        } else {
+            headerText = item.title || 'Details';
+        }
+        
+        document.getElementById('detailModalTitle').innerText = headerText;
+        // APPLY SAVED FONT STYLES TO DETAILS MODAL
+        const contentEl = document.getElementById('fullTextContent');
+        contentEl.innerHTML = escapeHTML(item.body || item.reason);
+        contentEl.style.fontFamily = item.fontFamily || 'inherit';
+        contentEl.style.fontSize = item.fontSize ? item.fontSize + 'px' : '16px';
+        contentEl.style.fontWeight = '700';
+
         document.getElementById('textModal').style.display = 'flex';  
       }  
     }  
@@ -1279,20 +1332,108 @@
        dom.fabOptions.style.display = dom.fabOptions.style.display === 'flex' ? 'none' : 'flex';  
     });  
   
+    // --- FORMATTING LOGIC ---
+    let currentFont = "'Poppins', sans-serif";
+
+    // Toggle Tool Panels
+    window.toggleTool = function(tool) {
+        const sizePanel = document.getElementById('sizePanel');
+        const fontPanel = document.getElementById('fontPanel');
+        const btnTT = document.getElementById('btnTT');
+        const btnFF = document.getElementById('btnFF');
+
+        if(tool === 'size') {
+            if(sizePanel.style.display === 'block') {
+                sizePanel.style.display = 'none';
+                btnTT.classList.remove('active');
+            } else {
+                sizePanel.style.display = 'block';
+                fontPanel.style.display = 'none';
+                btnTT.classList.add('active');
+                btnFF.classList.remove('active');
+            }
+        } else if(tool === 'font') {
+            if(fontPanel.style.display === 'block') {
+                fontPanel.style.display = 'none';
+                btnFF.classList.remove('active');
+            } else {
+                fontPanel.style.display = 'block';
+                sizePanel.style.display = 'none';
+                btnFF.classList.add('active');
+                btnTT.classList.remove('active');
+            }
+        }
+    }
+
+    // Apply Size from Slider
+    window.applyFormat = function() {
+        // MODIFIED: Slider logic 0-10 -> 12px-32px
+        const sliderVal = parseInt(dom.sizeSlider.value);
+        const fontSize = 12 + (sliderVal * 2); 
+
+        // Apply
+        dom.noteBody.style.fontSize = fontSize + 'px';
+        dom.expReason.style.fontSize = fontSize + 'px';
+        
+        // Update Button Text
+        document.getElementById('btnTT').innerText = "Size " + sliderVal;
+    }
+
+    // Set Font from Chip
+    window.setFont = function(fontName, el) {
+        currentFont = fontName;
+        
+        // Highlight Active Chip
+        document.querySelectorAll('.font-chip').forEach(c => c.classList.remove('active'));
+        if(el) el.classList.add('active');
+
+        // Apply Font Family
+        let actualFont = "";
+        if(fontName === 'Poppins') actualFont = "'Poppins', sans-serif";
+        else if(fontName === 'Hind') actualFont = "'Hind', sans-serif";
+        else if(fontName === 'Noto Sans Bengali') actualFont = "'Noto Sans Bengali', sans-serif";
+        else if(fontName === 'Mukta') actualFont = "'Mukta', sans-serif";
+        else if(fontName === 'Tiro Bangla') actualFont = "'Tiro Bangla', serif";
+
+        dom.noteTitle.style.fontFamily = actualFont;
+        dom.noteBody.style.fontFamily = actualFont;
+        dom.expReason.style.fontFamily = actualFont;
+    }
+
     function openEntry(mode) {  
-      // Hardware Back Button: Push state so checking back works  
       history.pushState({page: 'entry'}, null, '');  
         
       dom.fabOptions.style.display = 'none'; dom.fab.classList.remove('rotate');  
       currentMode = mode;  
       dom.modal.style.display = 'flex';  
       dom.form.reset(); dom.editId.value = ''; resetMedia(); drawingData = null;  
-        
+      
+      // RESET FORMATTING TO DEFAULTS
+      dom.sizeSlider.value = 3; // Default 3
+      document.getElementById('btnTT').innerText = "Size 3"; // Reset Text
+      currentFont = "'Poppins', sans-serif";
+      
+      // Reset Styles
+      dom.noteBody.style.fontFamily = currentFont;
+      dom.noteBody.style.fontSize = '18px'; 
+      dom.expReason.style.fontFamily = currentFont;
+      dom.expReason.style.fontSize = '18px';
+
+      // Hide Panels
+      document.getElementById('sizePanel').style.display = 'none';
+      document.getElementById('fontPanel').style.display = 'none';
+      document.getElementById('btnTT').classList.remove('active');
+      document.getElementById('btnFF').classList.remove('active');
+      
+      // Reset Font Chips
+      document.querySelectorAll('.font-chip').forEach(c => c.classList.remove('active'));
+      document.querySelector('.font-chip').classList.add('active'); // First one
+
       if (mode === 'expense') {  
          dom.noteFields.style.display = 'none';  
-         dom.expenseFields.style.display = 'flex'; // Flex for Full Screen  
+         dom.expenseFields.style.display = 'flex'; 
       } else {  
-         dom.noteFields.style.display = 'flex'; // Flex for Full Screen  
+         dom.noteFields.style.display = 'flex'; 
          dom.expenseFields.style.display = 'none';  
          if(mode === 'image') dom.mediaInput.click();  
       }  
@@ -1316,11 +1457,20 @@
        }  
   
        const ts = new Date().getTime();  
-       let newItem = {};  
+       
+       // Calculate current font size pixel value
+       const sliderVal = parseInt(dom.sizeSlider.value);
+       const fontSizePx = 12 + (sliderVal * 2);
+
+       let newItem = {
+           fontFamily: dom.noteBody.style.fontFamily || 'inherit',
+           fontSize: fontSizePx
+       };  
+
        if (currentMode === 'note' || currentMode === 'image') {  
-         newItem = { type: 'note', title: dom.noteTitle.value, body: dom.noteBody.value, category: 'General' };  
+         newItem = { ...newItem, type: 'note', title: dom.noteTitle.value, body: dom.noteBody.value, category: 'General' };  
        } else {  
-         newItem = { type: 'expense', amount: dom.expAmount.value.slice(0, 10), currency: dom.expCurrency.value, reason: dom.expReason.value, expType: dom.expType.value };  
+         newItem = { ...newItem, type: 'expense', amount: dom.expAmount.value.slice(0, 10), currency: dom.expCurrency.value, reason: dom.expReason.value, expType: dom.expType.value };  
        }  
        newItem.media = tempMedia; newItem.mediaType = tempMediaType; newItem.timestamp = ts;  
          
@@ -1341,7 +1491,7 @@
        }  
     });  
   
-    // --- DRAWING LOGIC (Editable) ---  
+    // --- DRAWING LOGIC (Editable + ZOOM + PAN) ---  
     const canvas = document.getElementById('drawCanvas');  
     const ctx = canvas.getContext('2d');  
     let isDrawing = false;  
@@ -1350,7 +1500,21 @@
     let eraserSize = 10;  
     let paths = [];   
     let currentPath = [];   
-      
+    
+    // Zoom & Pan Variables
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isPanningMode = false;
+    let startPanX = 0;
+    let startPanY = 0;
+    const MAX_SCALE = 3; // Maximum zoom (100%)
+
+    // Gesture/Pinch Variables
+    let initialDistance = 0;
+    let initialScale = 1;
+    let isPinching = false;
+
     function resizeCanvas() {   
         canvas.width = window.innerWidth;   
         canvas.height = window.innerHeight;   
@@ -1359,8 +1523,14 @@
     window.addEventListener('resize', resizeCanvas);  
   
     function redrawCanvas() {  
+       // Reset transform to clear the whole canvas
+       ctx.setTransform(1, 0, 0, 1, 0, 0);
        ctx.fillStyle = "#ffffff";  
        ctx.fillRect(0, 0, canvas.width, canvas.height);  
+
+       // Apply Zoom & Pan Transform
+       ctx.setTransform(scale, 0, 0, scale, panX, panY);
+
        ctx.lineCap = 'round';  
        paths.forEach(p => {  
           ctx.beginPath();  
@@ -1375,10 +1545,64 @@
        });  
     }  
   
+    /* MODIFIED: Drawing Pagination Logic (4 Pages of 4 Colors) + Animations */
+    const drawingColors = [
+        '#000000', '#e74c3c', '#4CAF50', '#2196F3', // Page 1
+        '#FFEB3B', '#FF9800', '#9C27B0', '#E91E63', // Page 2
+        '#00BCD4', '#795548', '#9E9E9E', '#607D8B', // Page 3
+        '#CDDC39', '#009688', '#3F51B5', '#FF5722'  // Page 4 (New)
+    ];
+    let currentColorPage = 0;
+
+    function renderColorPalette(direction) {
+        const container = document.getElementById('dynamicColorContainer');
+        
+        container.classList.remove('slide-right', 'slide-left');
+        void container.offsetWidth; 
+
+        if(direction === 'next') container.classList.add('slide-right');
+        else if(direction === 'prev') container.classList.add('slide-left');
+
+        container.innerHTML = '';
+        const itemsPerPage = 4; 
+        const start = currentColorPage * itemsPerPage;
+        const pageColors = drawingColors.slice(start, start + itemsPerPage);
+
+        pageColors.forEach(color => {
+            const btn = document.createElement('button');
+            btn.className = 'color-btn';
+            btn.style.background = color;
+            btn.setAttribute('data-color', color);
+            if(ctx.strokeStyle === color && ctx.globalCompositeOperation !== 'destination-out') {
+                btn.classList.add('active');
+            }
+            btn.addEventListener('click', () => setStrokeColor(color, btn));
+            enableSizeGesture(btn, 'color');
+            container.appendChild(btn);
+        });
+    }
+
+    document.getElementById('prevColorBtn').addEventListener('click', () => {
+        if(currentColorPage > 0) { currentColorPage--; renderColorPalette('prev'); }
+    });
+    document.getElementById('nextColorBtn').addEventListener('click', () => {
+        if(currentColorPage < 3) { currentColorPage++; renderColorPalette('next'); } 
+    });
+
+    window.togglePanMode = function() {
+        isPanningMode = !isPanningMode;
+        const btn = document.getElementById('panModeBtn');
+        if(isPanningMode) {
+            btn.classList.add('active');
+            btn.innerHTML = `<svg style="width:16px; height:16px; fill:currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM3 13h2v-2H3v2zm16-2v2h2v-2h-2zm-6.21 4.29l1.41 1.41L12 19.41l-2.2-2.71 1.41-1.41.79.97V13h2v3.26l.79-.97zM13 11V5h-2v6h2zm-2.91-1.29l-.79.97-1.41-1.41 2.71-2.2 2.71 2.2-1.41 1.41-.79-.97v-.92l-1.02.82z"/></svg> Draw`;
+        } else {
+            btn.classList.remove('active');
+             btn.innerHTML = `<svg style="width:16px; height:16px; fill:currentColor" viewBox="0 0 24 24"><path d="M18 9c-.95 0-1.81.51-2.27 1.29-.27-.08-.55-.12-.85-.12-.87 0-1.68.32-2.31.87-.29-.63-.94-1.04-1.67-1.04-.6 0-1.15.26-1.53.69-.15-.09-.32-.15-.51-.15-1.54 0-2.61 1.67-1.85 3.19l1.6 3.21c1.37 2.74 4.19 4.3 6.94 4.04 3.01-.28 5.37-3.04 5.37-6.08V11c0-1.1-.9-2-2-2z"/></svg> Move`;
+        }
+    }
+
     function openDrawing() {  
-       // Hardware Back Button: Push state so checking back works  
        history.pushState({page: 'drawing'}, null, '');  
-  
        dom.fabOptions.style.display = 'none'; dom.fab.classList.remove('rotate');  
        document.getElementById('drawingModal').style.display = 'flex';  
          
@@ -1390,12 +1614,14 @@
           resizeCanvas();  
        }  
          
+       scale = 1; panX = 0; panY = 0;
+       updateZoomDisplay();
+       redrawCanvas();
+
        ctx.strokeStyle = '#000'; ctx.lineWidth = penSize; ctx.lineCap = 'round';  
-       document.querySelectorAll('.color-btn').forEach(btn => enableSizeGesture(btn, 'color'));  
+       currentColorPage = 0;
+       renderColorPalette(); 
        enableSizeGesture(document.getElementById('eraserBtn'), 'eraser');  
-       
-       // Reset Rainbow button style
-       document.getElementById('customColorBtn').style.background = 'conic-gradient(red, yellow, lime, aqua, blue, magenta, red)';
     }  
       
     function saveAndCloseDrawing() {  
@@ -1403,9 +1629,21 @@
           document.getElementById('drawingModal').style.display = 'none';  
           return;  
        }  
-  
        const tempCanvas = document.createElement('canvas'); tempCanvas.width = canvas.width; tempCanvas.height = canvas.height;  
-       const tCtx = tempCanvas.getContext('2d'); tCtx.fillStyle = "#ffffff"; tCtx.fillRect(0,0,tempCanvas.width, tempCanvas.height); tCtx.drawImage(canvas, 0,0);  
+       const tCtx = tempCanvas.getContext('2d'); tCtx.fillStyle = "#ffffff"; tCtx.fillRect(0,0,tempCanvas.width, tempCanvas.height); 
+       
+       tCtx.lineCap = 'round';
+       paths.forEach(p => {  
+          tCtx.beginPath();  
+          tCtx.strokeStyle = p.color;  
+          tCtx.lineWidth = p.size;  
+          tCtx.globalCompositeOperation = p.mode;  
+          if(p.points.length > 0) {  
+             tCtx.moveTo(p.points[0].x, p.points[0].y);  
+             for(let i=1; i<p.points.length; i++) tCtx.lineTo(p.points[i].x, p.points[i].y);  
+             tCtx.stroke();  
+          }  
+       });  
          
        const ts = new Date().getTime();  
        let newItem = {   
@@ -1421,8 +1659,8 @@
        };  
   
        if (dom.editId.value) {  
-         const index = entries.findIndex(x => x.id == newItem.id);  
-         if(index > -1) entries[index] = newItem;  
+         const index = entries.findIndex(x => x.id == dom.editId.value);  
+         if(index > -1) { newItem.id = parseInt(dom.editId.value); entries[index] = newItem; }  
        } else { entries.push(newItem); }  
          
        saveToStorage(); renderList(entries, dom.searchInput.value);  
@@ -1430,37 +1668,20 @@
        showToast('Saved');  
     }  
   
-    function setStrokeColor(color, btn) { ctx.strokeStyle = color; ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = penSize; highlightTool(btn); }  
-    function setEraser() { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = eraserSize; highlightTool(document.getElementById('eraserBtn')); }  
+    function setStrokeColor(color, btn) { 
+        if(isPanningMode) togglePanMode(); 
+        ctx.strokeStyle = color; ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = penSize; highlightTool(btn); 
+    }  
+    function setEraser() { 
+        if(isPanningMode) togglePanMode(); 
+        ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = eraserSize; highlightTool(document.getElementById('eraserBtn')); 
+    }  
       
     function highlightTool(btn) {   
-       document.querySelectorAll('.color-btn, .tool-btn, .color-picker-btn').forEach(b => b.classList.remove('active'));  
+       document.querySelectorAll('.color-btn, .tool-btn').forEach(b => b.classList.remove('active'));  
        if(btn) btn.classList.add('active');  
     }  
 
-    // New Color Picker Logic
-    const colorInput = document.getElementById('nativeColorPicker');
-    const customBtn = document.getElementById('customColorBtn');
-
-    customBtn.addEventListener('click', () => {
-         // Fix: If color is black, force red so sliders appear at 100%
-         if(colorInput.value === '#000000'){
-             colorInput.value = '#ff0000';
-         }
-         colorInput.click();
-    });
-
-    colorInput.addEventListener('input', (e) => {
-        const color = e.target.value;
-        ctx.strokeStyle = color;
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.lineWidth = penSize;
-        
-        // Update button UI
-        customBtn.style.background = color;
-        highlightTool(customBtn);
-    });
-  
     function enableSizeGesture(btn, type) {  
        let startX = 0; let startSize = type === 'eraser' ? eraserSize : penSize; let isSliding = false;  
        btn.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startSize = type === 'eraser' ? eraserSize : penSize; isSliding = false; });  
@@ -1474,35 +1695,143 @@
                else { penSize = newSize; if(ctx.globalCompositeOperation !== 'destination-out') ctx.lineWidth = penSize; showToast('Pen: ' + newSize); }  
            }  
        });  
-       btn.addEventListener('touchend', (e) => { if(!isSliding) { if(type === 'eraser') setEraser(); else setStrokeColor(btn.getAttribute('data-color'), btn); } });  
+       btn.addEventListener('touchend', (e) => { if(!isSliding) { if(type === 'eraser') setEraser(); else { 
+           if(btn.hasAttribute('data-color')) setStrokeColor(btn.getAttribute('data-color'), btn);
+       } } });  
     }  
   
-    function startDraw(e) {   
-       isDrawing = true; [lastX, lastY] = getXY(e);   
-       currentPath = [{x: lastX, y: lastY}];  
+    // --- UPDATED COORDINATE SYSTEM ---
+    function getXY(e) { 
+        const rect = canvas.getBoundingClientRect();
+        let clientX, clientY;
+        
+        if(e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+
+        const xRel = clientX - rect.left;
+        const yRel = clientY - rect.top;
+
+        const x = (xRel - panX) / scale;
+        const y = (yRel - panY) / scale;
+        
+        return [x, y];
     }  
-    function draw(e) {  
-       if(!isDrawing) return;  
-       const [x, y] = getXY(e);  
-       ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();  
-       [lastX, lastY] = [x, y];  
-       currentPath.push({x: x, y: y});  
-    }  
-    function stopDraw() {   
-       if(isDrawing) {  
-          isDrawing = false;   
-          paths.push({  
-             points: currentPath,  
-             color: ctx.strokeStyle,  
-             size: ctx.lineWidth,  
-             mode: ctx.globalCompositeOperation  
-          });  
-       }  
-    }  
-    function getXY(e) { if(e.touches) return [e.touches[0].clientX, e.touches[0].clientY - 60]; return [e.offsetX, e.offsetY]; }  
+
+    // New: Calculate distance between two fingers
+    function getDistance(touches) {
+        return Math.hypot(
+            touches[0].clientX - touches[1].clientX,
+            touches[0].clientY - touches[1].clientY
+        );
+    }
+
+    // New: Update Display 0% to 100%
+    function updateZoomDisplay() {
+        // Map 1.0 -> 0%, MAX_SCALE -> 100%
+        let percentage = Math.round(((scale - 1) / (MAX_SCALE - 1)) * 100);
+        if(percentage < 0) percentage = 0;
+        if(percentage > 100) percentage = 100;
+        document.getElementById('zoomLevelDisplay').innerText = percentage + '%';
+    }
   
-    canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stopDraw); canvas.addEventListener('mouseout', stopDraw);  
-    canvas.addEventListener('touchstart', startDraw); canvas.addEventListener('touchmove', draw); canvas.addEventListener('touchend', stopDraw);  
+    function handleTouchStart(e) {
+        if(e.touches.length === 2) {
+            isPinching = true;
+            initialDistance = getDistance(e.touches);
+            initialScale = scale;
+            return;
+        }
+
+        const [x, y] = getXY(e);
+        
+        if(isPanningMode) {
+            isPanning = true;
+            startPanX = e.touches ? e.touches[0].clientX : e.clientX;
+            startPanY = e.touches ? e.touches[0].clientY : e.clientY;
+            return;
+        }
+
+        isDrawing = true; lastX = x; lastY = y;   
+        currentPath = [{x: lastX, y: lastY}];
+    }
+
+    function handleTouchMove(e) {
+        e.preventDefault(); // Prevent scrolling
+
+        // PINCH ZOOM LOGIC
+        if(e.touches.length === 2 && isPinching) {
+            const currentDistance = getDistance(e.touches);
+            if(initialDistance > 0) {
+                const newScale = initialScale * (currentDistance / initialDistance);
+                
+                // Limit Scale (1.0 to MAX_SCALE)
+                scale = Math.max(1, Math.min(MAX_SCALE, newScale));
+                
+                updateZoomDisplay();
+                redrawCanvas();
+            }
+            return;
+        }
+
+        if(isPanningMode && isPanning) {
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            const deltaX = clientX - startPanX;
+            const deltaY = clientY - startPanY;
+            
+            panX += deltaX;
+            panY += deltaY;
+            
+            startPanX = clientX;
+            startPanY = clientY;
+            
+            redrawCanvas();
+            return;
+        }
+
+        if(!isDrawing) return;  
+        const [x, y] = getXY(e);  
+        ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();  
+        [lastX, lastY] = [x, y];  
+        currentPath.push({x: x, y: y});  
+    }
+
+    function handleTouchEnd(e) {
+        if(e.touches.length < 2) {
+            isPinching = false;
+        }
+
+        if(isPanningMode) {
+            isPanning = false;
+            return;
+        }
+        
+        if(isDrawing) {  
+            isDrawing = false;   
+            paths.push({  
+                points: currentPath,  
+                color: ctx.strokeStyle,  
+                size: ctx.lineWidth,  
+                mode: ctx.globalCompositeOperation  
+            });  
+        }  
+    }
+  
+    // Event Listeners (Merged Mouse & Touch)
+    canvas.addEventListener('mousedown', handleTouchStart); 
+    canvas.addEventListener('mousemove', handleTouchMove); 
+    canvas.addEventListener('mouseup', handleTouchEnd); 
+    canvas.addEventListener('mouseout', handleTouchEnd);  
+    
+    canvas.addEventListener('touchstart', handleTouchStart); 
+    canvas.addEventListener('touchmove', handleTouchMove); 
+    canvas.addEventListener('touchend', handleTouchEnd);  
   
   
     // Media  
@@ -1578,7 +1907,33 @@
       } else {  
         dom.expAmount.value = item.amount; dom.expCurrency.value = item.currency;  
         dom.expReason.value = item.reason; dom.expType.value = item.expType;  
-      }  
+      }
+
+      // LOAD FORMATTING
+      if(item.fontFamily) {
+          currentFont = item.fontFamily;
+      } else {
+          currentFont = "'Poppins', sans-serif";
+      }
+      
+      // Highlight correct chip
+      document.querySelectorAll('.font-chip').forEach(c => c.classList.remove('active'));
+      const activeChip = Array.from(document.querySelectorAll('.font-chip')).find(c => c.innerText.includes(currentFont.split(',')[0].replace("'","")));
+      if(activeChip) activeChip.classList.add('active');
+      else document.querySelectorAll('.font-chip')[0].classList.add('active');
+
+      if(item.fontSize) {
+          // MAP PX BACK TO SLIDER 0-10 (Formula: 12 + val*2)
+          // val = (fontSize - 12)/2
+          const sliderVal = (item.fontSize - 12) / 2;
+          dom.sizeSlider.value = sliderVal;
+          document.getElementById('btnTT').innerText = "Size " + sliderVal; // UPDATE TEXT ON EDIT
+      } else {
+          dom.sizeSlider.value = 3;
+          document.getElementById('btnTT').innerText = "Size 3";
+      }
+      applyFormat();
+
       if(item.media) {  
          tempMedia = item.media; tempMediaType = item.mediaType;  
          if(item.mediaType === 'image') { dom.previewImg.src = item.media; dom.previewImg.style.display = 'block'; }  
